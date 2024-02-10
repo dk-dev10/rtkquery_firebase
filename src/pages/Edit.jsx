@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { storage } from '../config/firebase';
-import { useAddBlogMutation } from '../redux/blogsapi';
-import { useNavigate } from 'react-router-dom';
+import {
+  useAddBlogMutation,
+  useGetBlogQuery,
+  useUpdateBlogMutation,
+} from '../redux/blogsapi';
+import { useNavigate, useParams } from 'react-router-dom';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 const initState = {
   title: '',
@@ -16,7 +21,11 @@ const Edit = () => {
   const { title, description } = data;
 
   const [addBlog] = useAddBlogMutation();
+  const [updateBlog] = useUpdateBlogMutation();
   const navigate = useNavigate();
+
+  const { id } = useParams();
+  const { data: blog } = useGetBlogQuery(id ? id : skipToken);
 
   const handleChange = (e) => {
     setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -26,10 +35,21 @@ const Edit = () => {
     e.preventDefault();
 
     if (title && description) {
-      await addBlog(data);
-      navigate('/');
+      if (id) {
+        await updateBlog({ id, data });
+        navigate('/');
+      } else {
+        await addBlog(data);
+        navigate('/');
+      }
     }
   };
+
+  useEffect(() => {
+    if (id && blog) setData({ ...blog });
+  }, [id, blog]);
+
+  console.log(blog && blog);
 
   useEffect(() => {
     const uploadFile = () => {
@@ -79,6 +99,7 @@ const Edit = () => {
           className='border p-2'
           name='title'
           onChange={handleChange}
+          value={title}
         />
         <textarea
           name='description'
@@ -87,6 +108,7 @@ const Edit = () => {
           rows='5'
           className='border p-2'
           onChange={handleChange}
+          value={description}
         ></textarea>
         <input
           type='file'
@@ -101,7 +123,7 @@ const Edit = () => {
           value='send'
           className='border p-2 cursor-pointer bg-slate-500 text-white disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed'
           // disabled={progress !== null && progress < 100}
-          disabled={!title | !description | !progress}
+          disabled={!title | !description | (id || !progress)}
         />
       </form>
     </div>
