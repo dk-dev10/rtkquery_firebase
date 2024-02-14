@@ -49,8 +49,6 @@ const Edit = () => {
     if (id && blog) setData({ ...blog });
   }, [id, blog]);
 
-  console.log(blog && blog);
-
   useEffect(() => {
     const uploadFile = () => {
       const storageRef = ref(storage, file.name);
@@ -78,9 +76,9 @@ const Edit = () => {
           console.log(error);
         },
         () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downoadUrl) => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
             console.log('img upload successfully');
-            setData((prev) => ({ ...prev, img: downoadUrl }));
+            setData((prev) => ({ ...prev, img: downloadUrl }));
           });
         }
       );
