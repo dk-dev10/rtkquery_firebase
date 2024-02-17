@@ -17,11 +17,9 @@ const BlogLong = ({
         <img src={img} className='w-full h-full object-cover' alt='' />
       </div>
       <div className='flex gap-[10%] w-full flex-col'>
-        <Link to={`/blog/${id}`}>
-          <h1 className='text-3xl font-bold font-nutino uppercase leading-[120%]'>
-            {title}
-          </h1>
-        </Link>
+        <h1 className='text-3xl font-bold font-nutino uppercase leading-[120%]'>
+          <Link className='hover:text-red-800' to={`/magazine/${id}`}>{title}</Link>
+        </h1>
         <p className='text-base leading-[180%] font-light mb-10'>
           {description}
         </p>

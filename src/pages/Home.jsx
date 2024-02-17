@@ -1,17 +1,22 @@
 import BlogLong from 'components/blog/blogLong';
 import BlogMedium from 'components/blog/blogMedium';
+import { Link } from 'react-router-dom';
 
 import { useGetBlogsQuery } from 'redux/blogsapi';
+
 import { sliceStr } from 'services/substring';
+
+import arrow from '../assets/svg/min_arrow.svg';
+import PodcastMedium from 'components/podcast/podcastMedium';
+import PageTitle from 'components/pageTitle';
+import Exclusive from 'components/exclusive';
 
 const Home = () => {
   const { data, isSuccess, isLoading } = useGetBlogsQuery();
 
   return (
     <div className='mb-10'>
-      <h1 className='uppercase text-9xl font-bold font-ysabeau text-center p-6'>
-        art & life
-      </h1>
+      <PageTitle>art & life</PageTitle>
       <div className='w-full h-[35px] bg-black flex items-center justify-between px-3 gap-3 overflow-hidden uppercase'>
         <span className='text-white font-semibold text-xl'>News Ticker</span>
         <span className='text-white font-semibold text-xl'>News Ticker</span>
@@ -22,6 +27,7 @@ const Home = () => {
         <span className='text-white font-semibold text-xl'>News Ticker</span>
         <span className='text-white font-semibold text-xl'>News Ticker</span>
       </div>
+
       <div className='w-full my-12'>
         <BlogMedium />
       </div>
@@ -37,7 +43,7 @@ const Home = () => {
               {data.map((blog) => (
                 <div
                   key={blog.id}
-                  className='w-full  border-b border-black py-12 first:pt-0'
+                  className='w-full  border-b border-black py-12 first:pt-0 last:border-b-0'
                 >
                   <BlogLong
                     title={blog.title}
@@ -52,9 +58,11 @@ const Home = () => {
         ) : (
           ''
         )}
-        <div className='w-[27%] h-max sticky top-12'>
+        <aside className='w-[27%] h-max mb-44'>
           <h6 className='text-base uppercase font-bold mb-2 '>Printmagazine</h6>
           <h2 className='text-5xl font-bold'>03/2022</h2>
+
+          <Exclusive />
 
           <div className='mt-12'>
             <h6 className='uppercase text-base font-bold mb-6'>Most popular</h6>
@@ -105,7 +113,97 @@ const Home = () => {
               </button>
             </div>
           </div>
+        </aside>
+      </div>
+      <Link
+        to='/magazine'
+        className='group bg-none border-none uppercase text-lg flex items-center gap-2 pl-3 my-24 font-semibold'
+      >
+        All articles
+        <img
+          src={arrow}
+          alt=''
+          className='group-hover:translate-x-1 transition-all rotate-180'
+        />
+      </Link>
+
+      <div className='w-full pb-24 border-t border-black'>
+        <div className='flex items-center justify-between'>
+          <h1 className='text-7xl font-bold font-nutino uppercase leading-[130%]'>
+            Podcast
+          </h1>
+          <Link
+            to='/podcast'
+            className='group bg-none border-none uppercase text-lg flex items-center gap-2 pl-3 my-24 font-semibold'
+          >
+            All Episodes
+            <img
+              src={arrow}
+              alt=''
+              className='group-hover:translate-x-1 transition-all rotate-180'
+            />
+          </Link>
         </div>
+        {isLoading && <p className='text-center'>Loading...</p>}
+        {isSuccess ? (
+          data.length < 1 ? (
+            <p className='w-full text-center text-red-600 text-4xl'>
+              Blogs Empty!
+            </p>
+          ) : (
+            <div className='w-full border-t border-l border-slate-500  flex flex-wrap'>
+              {data.map((blog) => (
+                <div
+                  key={blog.id}
+                  className='w-[25%] border-r border-b border-slate-500 p-12'
+                >
+                  <PodcastMedium />
+                </div>
+              ))}
+            </div>
+          )
+        ) : (
+          ''
+        )}
+      </div>
+      <div className='w-full pb-24 border-t border-black'>
+        <div className='flex items-center justify-between'>
+          <h1 className='text-7xl font-bold font-nutino uppercase leading-[130%]'>
+            Authors
+          </h1>
+          <Link
+            to='/author'
+            className='group bg-none border-none uppercase text-lg flex items-center gap-2 pl-3 my-24 font-semibold'
+          >
+            All Authors
+            <img
+              src={arrow}
+              alt=''
+              className='group-hover:translate-x-1 transition-all rotate-180'
+            />
+          </Link>
+        </div>
+        {isLoading && <p className='text-center'>Loading...</p>}
+        {isSuccess ? (
+          data.length < 1 ? (
+            <p className='w-full text-center text-red-600 text-4xl'>
+              Blogs Empty!
+            </p>
+          ) : (
+            <div className='w-full border-t border-l border-slate-500  flex flex-wrap'>
+              {data.map((blog) => (
+                <div
+                  key={blog.id}
+                  className='w-[25%] border-r border-b border-slate-500 p-12'
+                >
+                  <PodcastMedium />
+                </div>
+              ))}
+            </div>
+          )
+        ) : (
+          ''
+        )}
       </div>
     </div>
   );

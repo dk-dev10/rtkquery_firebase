@@ -29,11 +29,11 @@ const BlogVertical = ({
           loading='lazy'
         />
       </div>
-      <h1 className='text-xl font-bold uppercase leading-[120%] min-h-[50px] border-b'>
-        <Link to={`/blog/${id}`} className='hover:text-red-800'>
+      <h3 className='text-xl font-bold uppercase leading-[120%] min-h-[50px] border-b'>
+        <Link to={`/magazine/${id}`} className='hover:text-red-800'>
           {title}
         </Link>
-      </h1>
+      </h3>
       <p className='text-sm leading-[180%] font-light mb-4 text-slate-900'>
         {description}
       </p>

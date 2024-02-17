@@ -1,4 +1,5 @@
 import BlogVertical from 'components/blog/blogVertical';
+import PageTitle from 'components/pageTitle';
 import { useGetBlogsQuery } from 'redux/blogsapi';
 
 const Magazine = () => {
@@ -13,9 +14,7 @@ const Magazine = () => {
 
   return (
     <div className='pb-12'>
-      <h1 className='uppercase text-9xl font-bold font-ysabeau text-center p-6'>
-        Magazine
-      </h1>
+      <PageTitle>Magazine</PageTitle>
       <div className='w-full flex py-4'>
         <p className='uppercase text-base text-bold text-josefin'>Categories</p>
         <div className='ml-auto flex gap-3'>

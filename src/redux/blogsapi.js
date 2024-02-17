@@ -6,6 +6,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  setDoc,
   updateDoc,
   // serverTimestamp,
 } from 'firebase/firestore';
@@ -87,6 +88,18 @@ export const blogApi = createApi({
       },
       invalidatesTags: ['Blog'],
     }),
+    addUser: builder.mutation({
+      async queryFn(data) {
+        try {
+          await setDoc(doc(firestore, 'user', data.id), {
+            email: data.email,
+          });
+          return { data: 'ok' };
+        } catch (error) {
+          return { error };
+        }
+      },
+    }),
   }),
 });
 
@@ -96,4 +109,5 @@ export const {
   useDeleteBlogMutation,
   useGetBlogQuery,
   useUpdateBlogMutation,
+  useAddUserMutation,
 } = blogApi;
