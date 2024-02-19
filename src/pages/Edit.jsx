@@ -1,24 +1,47 @@
 import { useEffect, useState } from 'react';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage } from '../config/firebase';
+import { useNavigate, useParams } from 'react-router-dom';
+import { skipToken } from '@reduxjs/toolkit/query';
 import {
   useAddBlogMutation,
   useGetBlogQuery,
   useUpdateBlogMutation,
-} from '../redux/blogsapi';
-import { useNavigate, useParams } from 'react-router-dom';
-import { skipToken } from '@reduxjs/toolkit/query';
+} from 'redux/service/blog/blogApi';
+import { useFilePreview } from 'hook/useFilePreview';
+import { useUploadFileMutation } from 'redux/service/storage/uploadFileApi';
+import { toast } from 'sonner';
 
 const initState = {
   title: '',
   description: '',
+  img: null,
+  categories: 'art',
+  content: [
+    {
+      type: 'text',
+      text: `Porttitor rhoncus dolor purus non enim praesent elementum. 
+      Eget dolor morbi non arcu risus quis varius.
+       Posuere ac ut consequat semper viverra nam libero.`,
+    },
+    {
+      type: 'quote',
+      text: 'Porttitor rhoncus dolor purus non enim praesent elementum.',
+      author: 'Mr. Albin',
+    },
+  ],
+  duration: 2,
+  author: {
+    name: '',
+    id: '',
+  },
+  comment: null,
 };
 
 const Edit = () => {
   const [data, setData] = useState(initState);
   const [file, setFile] = useState(null);
-  const [progress, setProgress] = useState(null);
   const { title, description } = data;
+
+  const [uploadFiles] = useUploadFileMutation();
 
   const [addBlog] = useAddBlogMutation();
   const [updateBlog] = useUpdateBlogMutation();
@@ -26,6 +49,9 @@ const Edit = () => {
 
   const { id } = useParams();
   const { data: blog } = useGetBlogQuery(id ? id : skipToken);
+
+  const { filePreview, filePickerRef, previewFile, sameFile } =
+    useFilePreview();
 
   const handleChange = (e) => {
     setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -36,7 +62,11 @@ const Edit = () => {
 
     if (title && description) {
       if (id) {
-        await updateBlog({ id, data });
+        const { data: imgUrl } = await uploadFiles(file);
+        await updateBlog({ id, data, imgUrl });
+        toast.success('Article updated', {
+          position: 'top-right',
+        });
         navigate('/');
       } else {
         await addBlog(data);
@@ -44,52 +74,17 @@ const Edit = () => {
       }
     }
   };
-
   useEffect(() => {
-    if (id && blog) setData({ ...blog });
+    if (id && blog) setData((prev) => ({ ...prev, ...blog }));
   }, [id, blog]);
 
   useEffect(() => {
-    const uploadFile = () => {
-      const storageRef = ref(storage, file.name);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setProgress(progress);
-
-          switch (snapshot.state) {
-            case 'paused':
-              console.log('Paused');
-              break;
-            case 'running':
-              console.log('Running');
-              break;
-            default:
-              break;
-          }
-        },
-        (error) => {
-          console.log(error);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
-            console.log('img upload successfully');
-            setData((prev) => ({ ...prev, img: downloadUrl }));
-          });
-        }
-      );
-    };
-    file && uploadFile();
-  }, [file]);
+    if (sameFile) setFile(sameFile);
+  }, [file, sameFile]);
 
   return (
     <div className='m-auto p-[15px] mt-10 border w-[50vw]'>
       <h2 className='text-center text-3xl'>Create blog</h2>
-
       <form onSubmit={handleSubmit} className='mt-4 flex flex-col gap-4'>
         <input
           type='text'
@@ -109,19 +104,32 @@ const Edit = () => {
           value={description}
         ></textarea>
         <input
+          ref={filePickerRef}
+          accept='image/*'
+          multiple={false}
+          onChange={previewFile}
           type='file'
-          name='photo'
-          id='photo'
-          className='border p-2'
-          onChange={(e) => setFile(e.target.files[0])}
+          hidden
         />
-
+        <button
+          className='p-3 border px-6 border-black'
+          onClick={() => filePickerRef.current.click()}
+          type='button'
+        >
+          Choose
+        </button>
+        <div className='w-full aspect-video overflow-hidden'>
+          <img
+            src={filePreview ? filePreview : data.img}
+            alt='preview image'
+            className='w-full h-full object-cover'
+          />
+        </div>
         <input
           type='submit'
           value='send'
           className='border p-2 cursor-pointer bg-slate-500 text-white disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed'
-          // disabled={progress !== null && progress < 100}
-          disabled={!title | !description | (id || !progress)}
+          disabled={!title | !description}
         />
       </form>
     </div>

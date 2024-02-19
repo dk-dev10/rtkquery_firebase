@@ -1,4 +1,6 @@
-import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
+import { firestore } from 'config/firebase';
+import { apiWithBlogTag } from '../mainApi';
+
 import {
   addDoc,
   collection,
@@ -8,19 +10,15 @@ import {
   getDocs,
   setDoc,
   updateDoc,
-  // serverTimestamp,
 } from 'firebase/firestore';
-import { firestore } from '../config/firebase';
 
-export const blogApi = createApi({
-  reducerPath: 'blogApi',
-  baseQuery: fakeBaseQuery(),
+const blogApi = apiWithBlogTag.injectEndpoints({
   tagTypes: ['Blog'],
   endpoints: (builder) => ({
     getBlogs: builder.query({
       async queryFn() {
         try {
-          const blogRef = await collection(firestore, 'blog');
+          const blogRef = collection(firestore, 'blog');
           const blogRes = await getDocs(blogRef);
 
           const blogs = [];
@@ -40,7 +38,7 @@ export const blogApi = createApi({
     getBlog: builder.query({
       async queryFn(id) {
         try {
-          const fetch = await doc(firestore, 'blog', id);
+          const fetch = doc(firestore, 'blog', id);
           const blog = await getDoc(fetch);
 
           return { data: blog.data() };
@@ -53,11 +51,7 @@ export const blogApi = createApi({
     addBlog: builder.mutation({
       async queryFn(data) {
         try {
-          await addDoc(collection(firestore, 'blog'), {
-            ...data,
-            date: 'date',
-            // date: serverTimestamp(),
-          });
+          await addDoc(collection(firestore, 'blog'), data);
 
           return { data: 'ok' };
         } catch (error) {
@@ -67,9 +61,12 @@ export const blogApi = createApi({
       invalidatesTags: ['Blog'],
     }),
     updateBlog: builder.mutation({
-      async queryFn({ id, data }) {
+      async queryFn({ id, data, imgUrl }) {
         try {
-          await updateDoc(doc(firestore, 'blog', id), data);
+          await updateDoc(doc(firestore, 'blog', id), {
+            ...data,
+            img: imgUrl || data.img,
+          });
           return { data: 'ok' };
         } catch (error) {
           return { error };
@@ -104,10 +101,10 @@ export const blogApi = createApi({
 });
 
 export const {
+  useGetBlogQuery,
   useGetBlogsQuery,
   useAddBlogMutation,
   useDeleteBlogMutation,
-  useGetBlogQuery,
   useUpdateBlogMutation,
   useAddUserMutation,
 } = blogApi;

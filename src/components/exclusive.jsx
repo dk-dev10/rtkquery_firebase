@@ -9,7 +9,7 @@ const Exclusive = () => {
     <Link className='cursor-pointer group/link'>
       <div
         style={{ '--image-url': `url(${img})` }}
-        className={`w-full flex flex-col mt-8 aspect-5/6 bg-red-600 relative bg-[image:var(--image-url)] hover:bg-110 transition-all bg-100 bg-center p-4 bg-blend-multiply`}
+        className={`w-full flex flex-col mt-8 aspect-5/6 bg-red-600 relative bg-[image:var(--image-url)] hover:bg-110 transition-all ease-linear bg-100 bg-center p-4 bg-blend-multiply`}
       >
         <h3 className='uppercase text-8xl font-bold font-nutino text-white'>
           Fyrre

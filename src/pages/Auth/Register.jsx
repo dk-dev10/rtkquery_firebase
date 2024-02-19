@@ -1,12 +1,14 @@
-import { registerUser } from 'config/firebase';
+import { useAuth } from 'hook/useAuth';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAddUserMutation } from 'redux/blogsapi';
+import { useAddUserMutation } from 'redux/service/blog/blogApi';
 
 const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [addUser] = useAddUserMutation();
+
+  const { registerUser } = useAuth();
 
   const navigate = useNavigate();
 

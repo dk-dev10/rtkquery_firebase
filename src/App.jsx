@@ -13,6 +13,8 @@ import Podcast from 'pages/Podcast/Podcast';
 import Login from 'pages/Auth/Login';
 import Register from 'pages/Auth/Register';
 import { AuthProvider } from 'context/AuthContext';
+import User from 'pages/User/User';
+import FilePreviewer from 'pages/Create';
 
 const App = () => {
   return (
@@ -23,7 +25,8 @@ const App = () => {
             <Navbar />
             <Routes>
               <Route path='/' element={<Home />} />
-              <Route path='/create' element={<Edit />} />
+              <Route path='/create' element={<FilePreviewer />} />
+              <Route path='/edit' element={<Edit />} />
               <Route path='/medium' element={<BlogVertical />} />
               <Route path='/update/:id' element={<Edit />} />
               <Route path='/magazine' element={<Outlet />}>
@@ -40,6 +43,7 @@ const App = () => {
               </Route>
               <Route path='/login' element={<Login />} />
               <Route path='/register' element={<Register />} />
+              <Route path='/profile' element={<User />} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>

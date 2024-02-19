@@ -1,6 +1,6 @@
 import AuthorLong from 'components/author/authorLong';
 import PageTitle from 'components/pageTitle';
-import { useGetBlogsQuery } from 'redux/blogsapi';
+import { useGetBlogsQuery } from 'redux/service/blog/blogApi';
 
 const Author = () => {
   const { data, isSuccess, isLoading } = useGetBlogsQuery();

@@ -1,17 +1,16 @@
-import { logoutUser } from 'config/firebase';
-import { AuthContext } from 'context/AuthContext';
-import { useContext } from 'react';
+// import { logoutUser } from 'config/firebase';
 import { Link, NavLink } from 'react-router-dom';
+import Dropdown from './dropdown/dropdown';
 
 const Navbar = () => {
-  const { currentUser } = useContext(AuthContext);
-
-  console.log(currentUser);
-
   const navs = [
     {
       to: '/create',
       title: 'Create',
+    },
+    {
+      to: '/edit',
+      title: 'Edit',
     },
     {
       to: '/magazine',
@@ -32,8 +31,6 @@ const Navbar = () => {
       <Link to={'/'} className='text-xl font-semibold'>
         MAP Home
       </Link>
-      {currentUser ? <button onClick={logoutUser}>logged</button> : 'logout'}
-
       <nav>
         <ul className='flex gap-5 items'>
           {navs.map((item) => (
@@ -52,6 +49,7 @@ const Navbar = () => {
           ))}
         </ul>
       </nav>
+      <Dropdown />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import BlogVertical from 'components/blog/blogVertical';
 import PageTitle from 'components/pageTitle';
-import { useGetBlogsQuery } from 'redux/blogsapi';
+import { useGetBlogsQuery } from 'redux/service/blog/blogApi';
 
 const Magazine = () => {
   const { data, isSuccess, isLoading } = useGetBlogsQuery();

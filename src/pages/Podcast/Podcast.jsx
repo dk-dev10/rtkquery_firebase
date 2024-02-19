@@ -1,7 +1,6 @@
-import { useGetBlogsQuery } from 'redux/blogsapi';
-
 import PodcastLong from 'components/podcast/podcastLong';
 import PageTitle from 'components/pageTitle';
+import { useGetBlogsQuery } from 'redux/service/blog/blogApi';
 
 const Podcast = () => {
   const { data, isSuccess, isLoading } = useGetBlogsQuery();

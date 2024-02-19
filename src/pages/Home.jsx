@@ -2,18 +2,17 @@ import BlogLong from 'components/blog/blogLong';
 import BlogMedium from 'components/blog/blogMedium';
 import { Link } from 'react-router-dom';
 
-import { useGetBlogsQuery } from 'redux/blogsapi';
-
 import { sliceStr } from 'services/substring';
 
-import arrow from '../assets/svg/min_arrow.svg';
 import PodcastMedium from 'components/podcast/podcastMedium';
 import PageTitle from 'components/pageTitle';
 import Exclusive from 'components/exclusive';
+import { useGetBlogsQuery } from 'redux/service/blog/blogApi';
+
+import arrow from '../assets/svg/min_arrow.svg';
 
 const Home = () => {
   const { data, isSuccess, isLoading } = useGetBlogsQuery();
-
   return (
     <div className='mb-10'>
       <PageTitle>art & life</PageTitle>

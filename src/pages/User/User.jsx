@@ -1,0 +1,149 @@
+import GoBack from 'components/goback';
+import { useAuth } from 'hook/useAuth';
+import { Edit, Save } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useUpdateUserMutation } from 'redux/service/user/userApi';
+
+const User = () => {
+  const [isRead, setIsRead] = useState(true);
+  const [userData, setUserData] = useState({
+    avatar: null,
+    email: '',
+    name: '',
+    about: '',
+    id: null,
+  });
+
+  const { avatar, email, name, about } = userData;
+  const { currentUser } = useAuth();
+
+  const [updateUser] = useUpdateUserMutation();
+
+  function onChangeValue(e) {
+    setUserData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  }
+
+  function onCancel() {
+    setUserData((prev) => ({
+      ...prev,
+      ...currentUser.user,
+      id: currentUser.id,
+    }));
+    setIsRead(true);
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    await updateUser(userData);
+    setIsRead(true);
+  }
+
+  useEffect(() => {
+    if (currentUser) {
+      setUserData((prev) => ({
+        ...prev,
+        ...currentUser.user,
+        id: currentUser.id,
+      }));
+    }
+  }, [currentUser]);
+
+  return (
+    <div>
+      <GoBack>Profile</GoBack>
+      <div className='w-full flex'>
+        <div className='w-1/4 p-12 pt-0'>
+          <div className='w-[250px] h-[250px] bg-amber-600 rounded-full overflow-hidden '>
+            <img
+              src={avatar}
+              alt='user avatar'
+              className='w-full h-full object-cover'
+            />
+          </div>
+          <hr className='divide-x my-6  border-slate-400' />
+        </div>
+
+        <div className='w-3/4 pl-12 border-l border-slate-400'>
+          <form onSubmit={handleSubmit} className='w-full'>
+            <div className='w-full flex flex-col mb-6'>
+              <label htmlFor='input' className='text-slate-700'>
+                User Name
+              </label>
+              <input
+                type='text'
+                value={name}
+                readOnly={isRead}
+                placeholder='Name'
+                id='input'
+                className='border p-2 w-2/4  border-slate-400'
+                name='name'
+                onChange={onChangeValue}
+              />
+            </div>
+            <div className='w-full flex flex-col mb-6'>
+              <label htmlFor='mail' className='text-slate-700'>
+                Email
+              </label>
+              <input
+                type='text'
+                value={email}
+                readOnly={true}
+                placeholder='Email'
+                id='mail'
+                className='border p-2 w-2/4  border-slate-400'
+              />
+            </div>
+            <div className='w-full flex flex-col  mb-6'>
+              <label htmlFor='about' className='text-slate-700'>
+                About me
+              </label>
+              <textarea
+                type='text'
+                value={about}
+                readOnly={isRead}
+                placeholder='About'
+                id='about'
+                className='border p-2 w-2/4 min-h-60 max-h-80 resize-none  border-slate-400'
+                name='about'
+                onChange={onChangeValue}
+              />
+            </div>
+            <div className='flex gap-4'>
+              {isRead ? (
+                <button
+                  type='button'
+                  onClick={() => setIsRead(false)}
+                  className='w-28 justify-center px-4 py-2 flex items-center gap-2 text-lg border bg-slate-700 text-white'
+                >
+                  Edit <Edit className='h-5' />
+                </button>
+              ) : (
+                <button
+                  type='button'
+                  onClick={onCancel}
+                  className='w-28 justify-center px-4 py-2 flex items-center gap-2 border text-lg bg-slate-700 text-white'
+                >
+                  Cancel
+                </button>
+              )}
+              {isRead ? null : (
+                <button
+                  type='submit'
+                  className='w-28 justify-center items-center px-4 py-2 flex text-lg border text-slate-700 border-slate-700'
+                >
+                  Save <Save className='h-5' />
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default User;

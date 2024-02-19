@@ -18,7 +18,9 @@ const BlogLong = ({
       </div>
       <div className='flex gap-[10%] w-full flex-col'>
         <h1 className='text-3xl font-bold font-nutino uppercase leading-[120%]'>
-          <Link className='hover:text-red-800' to={`/magazine/${id}`}>{title}</Link>
+          <Link className='hover:text-[#c22322]' to={`/magazine/${id}`}>
+            {title}
+          </Link>
         </h1>
         <p className='text-base leading-[180%] font-light mb-10'>
           {description}

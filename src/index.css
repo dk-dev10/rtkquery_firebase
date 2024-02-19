@@ -10,7 +10,48 @@ font-family: 'Josefin Sans', sans-serif;
   padding: 0;
 
   font-family: 'Ysabeau Office', sans-serif;
+  outline: none;
 }
+
+*::selection {
+  background: rgb(194 35 34);
+  color: #ffffff;
+}
+*::-moz-selection {
+  background: rgb(194 35 34);
+  color: #ffffff;
+}
+*::-webkit-selection {
+  background: rgb(194 35 34);
+  color: #ffffff;
+}
+
+img::selection {
+  -webkit-user-select: none; /* Safari */
+  user-select: none;
+  background: none;
+  box-shadow: 1px 1px 1px 1px rgb(194 35 34);
+}
+img::-moz-selection {
+  -webkit-user-select: none; /* Safari */
+  user-select: none;
+  background: none;
+  border: 1px solid rgb(194 35 34);
+}
+img::-webkit-selection {
+  -webkit-user-select: none; /* Safari */
+  user-select: none;
+  border: 1px solid rgb(194 35 34);
+  background: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

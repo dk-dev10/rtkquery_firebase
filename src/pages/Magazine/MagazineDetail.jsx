@@ -1,12 +1,21 @@
 import BlogMedium from 'components/blog/blogMedium';
 
 import GoBack from 'components/goback';
+import { useParams } from 'react-router-dom';
+import { useGetBlogQuery } from 'redux/service/blog/blogApi';
 
 const MagazineDetail = () => {
+  const { id } = useParams();
+  const { data, isLoading } = useGetBlogQuery(id);
+
+  if (isLoading) {
+    return <p>Loading ...</p>;
+  }
+
   return (
     <div className='pb-36'>
       <GoBack>Magazine</GoBack>
-      <BlogMedium />
+      <BlogMedium data={data} />
       <div className='w-full max-w-[1200px]  flex gap-[5%] mt-16 mx-auto'>
         <div className='w-[25%] h-max sticky top-12 '>
           <div className='flex items-center gap-4 pb-6 border-b border-black'>
@@ -15,12 +24,12 @@ const MagazineDetail = () => {
               src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
               alt=''
             />
-            <p className='text-3xl'>Jakob Gronberg</p>
+            <p className='text-3xl'>{data?.author?.name}</p>
           </div>
           <div className='flex flex-col gap-4 pt-6'>
             <div className='font-light font-nutino text-base inline-flex'>
               <span className='font-semibold'>Date</span>
-              <span className='ml-auto'>16. March 2022</span>
+              <span className='ml-auto'>{data?.date}</span>
             </div>
             <div className='font-light font-nutino text-base inline-flex'>
               <span className='font-semibold mr-2'>Duration</span>

@@ -1,13 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { blogApi } from './blogsapi';
+import { mainApi } from './service/mainApi';
 import { setupListeners } from '@reduxjs/toolkit/query';
+import { fileUploadApi } from './service/storage/uploadFileApi';
 
 export const store = configureStore({
   reducer: {
-    [blogApi.reducerPath]: blogApi.reducer,
+    [mainApi.reducerPath]: mainApi.reducer,
+    [fileUploadApi.reducerPath]: fileUploadApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(blogApi.middleware),
+    getDefaultMiddleware().concat(mainApi.middleware, fileUploadApi.middleware),
 });
 
 setupListeners(store.dispatch);
