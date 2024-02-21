@@ -34,7 +34,7 @@ const BlogVertical = ({
           {title}
         </Link>
       </h3>
-      <p className='text-sm leading-[180%] font-light mb-4 text-slate-900'>
+      <p className='text-sm leading-[180%] min-h-20 font-light mb-4 text-slate-900'>
         {description}
       </p>
       <div className='mt-auto flex items-center gap-6'>

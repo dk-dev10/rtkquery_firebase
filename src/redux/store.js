@@ -9,7 +9,10 @@ export const store = configureStore({
     [fileUploadApi.reducerPath]: fileUploadApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(mainApi.middleware, fileUploadApi.middleware),
+    getDefaultMiddleware({ serializableCheck: false }).concat(
+      mainApi.middleware,
+      fileUploadApi.middleware
+    ),
 });
 
 setupListeners(store.dispatch);

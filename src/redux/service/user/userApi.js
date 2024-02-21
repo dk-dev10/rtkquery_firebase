@@ -13,17 +13,6 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 
-// export const usr = {
-//   id: '',
-//   name: 'User Name',
-//   role: 'user | author',
-//   email: 'user.@mail.ru',
-//   img: 'link image',
-//   articles: ['array blog id'],
-//   about: 'about user',
-//   description: 'description user',
-// };
-
 /* Change email user
   import { getAuth, updateEmail } from "firebase/auth";
   const auth = getAuth();
@@ -61,12 +50,9 @@ const userApi = apiWithUserTag.injectEndpoints({
       },
     }),
     updateUser: builder.mutation({
-      async queryFn({ id, data, imgUrl }) {
+      async queryFn(data) {
         try {
-          await updateDoc(doc(firestore, 'user', id), {
-            ...data,
-            img: imgUrl,
-          });
+          await updateDoc(doc(firestore, 'user', data.id), data);
           return { data: 'ok' };
         } catch (error) {
           return { error };

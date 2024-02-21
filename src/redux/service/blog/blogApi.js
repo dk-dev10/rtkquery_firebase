@@ -6,14 +6,19 @@ import {
   collection,
   deleteDoc,
   doc,
+  endBefore,
+  getCountFromServer,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
+  query,
   setDoc,
+  startAfter,
   updateDoc,
 } from 'firebase/firestore';
 
 const blogApi = apiWithBlogTag.injectEndpoints({
-  tagTypes: ['Blog'],
   endpoints: (builder) => ({
     getBlogs: builder.query({
       async queryFn() {
@@ -35,6 +40,69 @@ const blogApi = apiWithBlogTag.injectEndpoints({
       },
       providesTags: ['Blog'],
     }),
+    getBlogsLimit: builder.query({
+      async queryFn(count) {
+        try {
+          const blogRef = query(
+            collection(firestore, 'blog'),
+            limit(count),
+            orderBy('date', 'asc')
+          );
+          const blogRes = await getDocs(blogRef);
+
+          const blogs = [];
+          blogRes.forEach((doc) => {
+            blogs.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+          return { data: blogs };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: ['Blog'],
+    }),
+    getBlogsPagination: builder.query({
+      async queryFn({ lim, next, prev }) {
+        try {
+          let blogRef, firstVisible, lastVisible, blogRes;
+          if (next) {
+            blogRef = query(
+              collection(firestore, 'blog'),
+              startAfter(next),
+              limit(lim)
+            );
+            blogRes = await getDocs(blogRef);
+          } else if (prev) {
+            blogRef = query(
+              collection(firestore, 'blog'),
+              endBefore(prev),
+              limit(lim)
+            );
+            blogRes = await getDocs(blogRef);
+          } else {
+            blogRef = query(collection(firestore, 'blog'), limit(lim));
+            blogRes = await getDocs(blogRef);
+            lastVisible = blogRes.docs[blogRes.docs.length - 1];
+            firstVisible = blogRes.docs[0];
+          }
+
+          const blogs = [];
+          blogRes.forEach((doc) => {
+            blogs.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+
+          return { data: { blogs, next: lastVisible, prev: firstVisible } };
+        } catch (error) {
+          return { error };
+        }
+      },
+    }),
     getBlog: builder.query({
       async queryFn(id) {
         try {
@@ -48,10 +116,27 @@ const blogApi = apiWithBlogTag.injectEndpoints({
       },
       providesTags: ['Blog'],
     }),
-    addBlog: builder.mutation({
-      async queryFn(data) {
+    getCountBlogs: builder.query({
+      async queryFn() {
         try {
-          await addDoc(collection(firestore, 'blog'), data);
+          const coll = collection(firestore, 'blog');
+          const snapshot = await getCountFromServer(coll);
+          const count = snapshot.data().count;
+          return { data: count };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: ['Blog'],
+    }),
+    addBlog: builder.mutation({
+      async queryFn({ blogData, imgUrl }) {
+        try {
+          await addDoc(collection(firestore, 'blog'), {
+            ...blogData,
+            img: imgUrl,
+            date: new Date(),
+          });
 
           return { data: 'ok' };
         } catch (error) {
@@ -61,11 +146,11 @@ const blogApi = apiWithBlogTag.injectEndpoints({
       invalidatesTags: ['Blog'],
     }),
     updateBlog: builder.mutation({
-      async queryFn({ id, data, imgUrl }) {
+      async queryFn({ id, blogData, imgUrl }) {
         try {
           await updateDoc(doc(firestore, 'blog', id), {
-            ...data,
-            img: imgUrl || data.img,
+            ...blogData,
+            img: imgUrl || blogData.img,
           });
           return { data: 'ok' };
         } catch (error) {
@@ -103,8 +188,11 @@ const blogApi = apiWithBlogTag.injectEndpoints({
 export const {
   useGetBlogQuery,
   useGetBlogsQuery,
+  useGetCountBlogsQuery,
+  useGetBlogsPaginationQuery,
   useAddBlogMutation,
   useDeleteBlogMutation,
   useUpdateBlogMutation,
   useAddUserMutation,
+  useGetBlogsLimitQuery,
 } = blogApi;

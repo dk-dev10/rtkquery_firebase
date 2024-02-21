@@ -1,8 +1,11 @@
 import GoBack from 'components/goback';
 import { useAuth } from 'hook/useAuth';
+import { useFilePreview } from 'hook/useFilePreview';
 import { Edit, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useUploadFileMutation } from 'redux/service/storage/uploadFileApi';
 import { useUpdateUserMutation } from 'redux/service/user/userApi';
+import { toast } from 'sonner';
 
 const User = () => {
   const [isRead, setIsRead] = useState(true);
@@ -17,6 +20,7 @@ const User = () => {
   const { avatar, email, name, about } = userData;
   const { currentUser } = useAuth();
 
+  const [uploadFile] = useUploadFileMutation();
   const [updateUser] = useUpdateUserMutation();
 
   function onChangeValue(e) {
@@ -52,18 +56,49 @@ const User = () => {
     }
   }, [currentUser]);
 
+  const { filePreview, filePickerRef, previewFile, sameFile } =
+    useFilePreview();
+
+  useEffect(() => {
+    const changeAvatar = async () => {
+      try {
+        const { data: imgUrl } = await uploadFile(sameFile);
+        const updateData = { ...userData, avatar: imgUrl };
+
+        await updateUser(updateData);
+        toast.success('Avatar updated', {
+          position: 'top-right',
+        });
+      } catch (error) {
+        return { error };
+      }
+    };
+
+    sameFile && changeAvatar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sameFile]);
+
   return (
     <div>
       <GoBack>Profile</GoBack>
       <div className='w-full flex'>
         <div className='w-1/4 p-12 pt-0'>
-          <div className='w-[250px] h-[250px] bg-amber-600 rounded-full overflow-hidden '>
+          <div className='w-[250px] h-[250px] bg-slate-700 rounded-full overflow-hidden z-20'>
             <img
-              src={avatar}
+              onClick={() => filePickerRef.current.click()}
+              src={filePreview ? filePreview : avatar}
               alt='user avatar'
-              className='w-full h-full object-cover'
+              className='w-full h-full rounded-full object-cover hover:opacity-80 cursor-pointer transition-opacity z-10'
             />
           </div>
+          <input
+            ref={filePickerRef}
+            onChange={previewFile}
+            multiple={false}
+            accept='image/*'
+            type='file'
+            hidden
+          />
           <hr className='divide-x my-6  border-slate-400' />
         </div>
 

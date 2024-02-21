@@ -2,17 +2,16 @@ import BlogLong from 'components/blog/blogLong';
 import BlogMedium from 'components/blog/blogMedium';
 import { Link } from 'react-router-dom';
 
-import { sliceStr } from 'services/substring';
-
 import PodcastMedium from 'components/podcast/podcastMedium';
 import PageTitle from 'components/pageTitle';
 import Exclusive from 'components/exclusive';
-import { useGetBlogsQuery } from 'redux/service/blog/blogApi';
+import { useGetBlogsLimitQuery } from 'redux/service/blog/blogApi';
 
 import arrow from '../assets/svg/min_arrow.svg';
 
 const Home = () => {
-  const { data, isSuccess, isLoading } = useGetBlogsQuery();
+  const { data, isSuccess, isLoading } = useGetBlogsLimitQuery(6);
+
   return (
     <div className='mb-10'>
       <PageTitle>art & life</PageTitle>
@@ -28,10 +27,10 @@ const Home = () => {
       </div>
 
       <div className='w-full my-12'>
-        <BlogMedium />
+        <BlogMedium data={data && data[0]} link />
       </div>
       <div className='w-full flex gap-[5%]'>
-        {isLoading && <p className='text-center'>Loading...</p>}
+        {isLoading && <p className='text-center w-[68%]'>Loading...</p>}
         {isSuccess ? (
           data.length < 1 ? (
             <p className='w-full text-center text-red-600 text-4xl'>
@@ -44,12 +43,7 @@ const Home = () => {
                   key={blog.id}
                   className='w-full  border-b border-black py-12 first:pt-0 last:border-b-0'
                 >
-                  <BlogLong
-                    title={blog.title}
-                    img={blog.img}
-                    description={sliceStr(blog.description, 250)}
-                    id={blog.id}
-                  />
+                  <BlogLong data={blog} />
                 </div>
               ))}
             </div>

@@ -1,15 +1,36 @@
 import BlogVertical from 'components/blog/blogVertical';
 import PageTitle from 'components/pageTitle';
-import { useGetBlogsQuery } from 'redux/service/blog/blogApi';
+import Pagination from 'components/pagination/pagination';
+import { useState } from 'react';
+import {
+  useGetBlogsPaginationQuery,
+  useGetCountBlogsQuery,
+} from 'redux/service/blog/blogApi';
+import { sliceStr } from 'services/substring';
 
 const Magazine = () => {
-  const { data, isSuccess, isLoading } = useGetBlogsQuery();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(8);
+  const [nextPage, setNextPage] = useState(null);
+  const [prevPage, setPrevPage] = useState(null);
 
-  const sliceStr = (str, num = 20) => {
-    if (str.length > 20) {
-      return `${str.substring(0, num)}...`;
-    }
-    return str;
+  const { data: count } = useGetCountBlogsQuery();
+  const { data, isLoading, isSuccess } = useGetBlogsPaginationQuery({
+    lim: postsPerPage,
+    next: nextPage,
+    prev: prevPage,
+  });
+  const { blogs, prev, next } = data || {};
+
+  const paginateFront = () => {
+    setCurrentPage(currentPage + 1);
+    setPrevPage(null);
+    setNextPage(next);
+  };
+  const paginateBack = () => {
+    setCurrentPage(currentPage - 1);
+    setPrevPage(prev);
+    setNextPage(null);
   };
 
   return (
@@ -34,14 +55,14 @@ const Magazine = () => {
       </div>
       {isLoading && <p className='text-center'>Loading...</p>}
       {isSuccess ? (
-        data.length < 1 ? (
+        blogs.length < 1 ? (
           <p className='w-full text-center text-red-600 text-4xl'>
             Blogs Empty!
           </p>
         ) : (
           <div className='flex flex-wrap mt-4  border-t border-l border-black'>
-            <>
-              {data.map((blog) => (
+
+              {blogs.map((blog) => (
                 <div
                   key={blog.id}
                   className='w-[25%] border-b border-r p-12 border-black'
@@ -54,9 +75,35 @@ const Magazine = () => {
                   />
                 </div>
               ))}
-            </>
+
           </div>
         )
+      ) : (
+        <div className='flex flex-wrap mt-4  border-t border-l border-black'>
+          {Array(postsPerPage)
+            .fill('')
+            .map((_, i) => (
+              <div
+                key={i}
+                className='w-[25%] h-[598px] border-b border-r p-12 border-black flex justify-center items-center'
+              >
+                <button className='size-8'>
+                  <div className='size-8 border animate-spin border-l-cyan-400 rounded-full border-cyan-600'></div>
+                </button>
+              </div>
+            ))}
+        </div>
+      )}
+
+      {count ? (
+        <Pagination
+          postsPerPage={postsPerPage}
+          totalPosts={count}
+          setCurrentPage
+          paginateBack={paginateBack}
+          paginateFront={paginateFront}
+          currentPage={currentPage}
+        />
       ) : (
         ''
       )}
