@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "dk-dev10.github.io/rtkquery_firebase",
+  "homepage": "dk-dev10.github.io/rtkquery_firebase/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
