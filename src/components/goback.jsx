@@ -4,6 +4,7 @@ import arrow from '../assets/svg/min_arrow.svg';
 
 const GoBack = ({ children }) => {
   const navigate = useNavigate();
+  console.log();
   return (
     <div className='w-full flex items-center py-8'>
       <button

@@ -1,36 +1,11 @@
 import { useAuth } from 'hook/useAuth';
+import useDropdown from 'hook/useDropdown';
 import { LogIn, LogOut, User } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Dropdown = () => {
-  const [isDrop, setIsDrop] = useState(false);
   const { currentUser, logoutUser } = useAuth();
-
-  const catMenu = useRef(null);
-
-  const closeOpenMenus = (e) => {
-    if (isDrop && !catMenu.current?.contains(e.target)) {
-      setIsDrop(() => false);
-    }
-  };
-
-  useEffect(() => {
-    if (isDrop) {
-      document.addEventListener('mousedown', closeOpenMenus);
-      const close = (e) => {
-        if (e.keyCode === 27) {
-          setIsDrop(() => false);
-        }
-      };
-      window.addEventListener('keydown', close);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', closeOpenMenus);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDrop]);
+  const { catMenu, setIsDrop, isDrop } = useDropdown();
 
   return (
     <div
@@ -58,17 +33,20 @@ const Dropdown = () => {
               Profile
             </Link>
             <Link
-              to={'/create'}
+              to={'/edit'}
               onClick={() => setIsDrop(false)}
               className='block px-4 py-2 text-base text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700'
             >
-              Create
+              Edit
             </Link>
             <hr className='divide-x' />
             {currentUser.id ? (
               <button
                 className='flex items-center gap-3 w-full px-4 py-2 text-base text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700'
-                onClick={logoutUser}
+                onClick={() => {
+                  setIsDrop(false);
+                  logoutUser();
+                }}
               >
                 Logout <LogOut className='text-base h-5' />
               </button>

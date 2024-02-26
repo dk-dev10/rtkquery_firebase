@@ -6,14 +6,20 @@ import {
   collection,
   deleteDoc,
   doc,
+  endBefore,
+  getCountFromServer,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
+  query,
   setDoc,
+  startAfter,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 
 const blogApi = apiWithBlogTag.injectEndpoints({
-  tagTypes: ['Blog'],
   endpoints: (builder) => ({
     getBlogs: builder.query({
       async queryFn() {
@@ -35,23 +41,122 @@ const blogApi = apiWithBlogTag.injectEndpoints({
       },
       providesTags: ['Blog'],
     }),
-    getBlog: builder.query({
-      async queryFn(id) {
+    getBlogsLimit: builder.query({
+      async queryFn(count) {
         try {
-          const fetch = doc(firestore, 'blog', id);
-          const blog = await getDoc(fetch);
+          const blogRef = query(
+            collection(firestore, 'blog'),
+            limit(count),
+            orderBy('date', 'asc')
+          );
+          const blogRes = await getDocs(blogRef);
 
-          return { data: blog.data() };
+          const blogs = [];
+          blogRes.forEach((doc) => {
+            blogs.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+          return { data: blogs };
         } catch (error) {
           return { error };
         }
       },
       providesTags: ['Blog'],
     }),
-    addBlog: builder.mutation({
-      async queryFn(data) {
+    getBlogsPagination: builder.query({
+      async queryFn({ lim, next, prev, categorie }) {
         try {
-          await addDoc(collection(firestore, 'blog'), data);
+          let blogRef, firstVisible, lastVisible, blogRes;
+          if (next) {
+            blogRef = query(
+              collection(firestore, 'blog'),
+              startAfter(next),
+              where('categories', 'in', categorie),
+              limit(lim)
+            );
+
+            blogRes = await getDocs(blogRef);
+          } else if (prev) {
+            blogRef = query(
+              collection(firestore, 'blog'),
+              endBefore(prev),
+              where('categories', 'in', categorie),
+              limit(lim)
+            );
+            blogRes = await getDocs(blogRef);
+          } else {
+            blogRef = query(
+              collection(firestore, 'blog'),
+              limit(lim),
+              where('categories', 'in', categorie)
+            );
+            blogRes = await getDocs(blogRef);
+            lastVisible = blogRes.docs[blogRes.docs.length - 1];
+            firstVisible = blogRes.docs[0];
+          }
+
+          const blogs = [];
+          blogRes.forEach((doc) => {
+            blogs.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+
+          return {
+            data: { blogs, next: lastVisible, prev: firstVisible },
+          };
+        } catch (error) {
+          return { error };
+        }
+      },
+    }),
+    getBlog: builder.query({
+      async queryFn({ id, authorId }) {
+        try {
+          let blog;
+          if (authorId) {
+            const fetch = doc(firestore, 'blog', id);
+            const res = await getDoc(fetch);
+            blog = res.data().author.id === authorId ? res.data() : undefined;
+          } else {
+            const fetch = doc(firestore, 'blog', id);
+            blog = (await getDoc(fetch)).data();
+          }
+
+          return { data: blog };
+        } catch (error) {
+          return { error };
+        }
+      },
+      providesTags: ['Blog'],
+    }),
+    getCountBlogs: builder.query({
+      async queryFn(categorie) {
+        try {
+          const coll = query(
+            collection(firestore, 'blog'),
+            where('categories', 'in', categorie)
+          );
+          const snapshot = await getCountFromServer(coll);
+          const count = snapshot.data().count;
+          return { data: count };
+        } catch (error) {
+          return { error };
+        }
+      },
+      invalidatesTags: ['Blog'],
+    }),
+    addBlog: builder.mutation({
+      async queryFn({ blogData, imgUrl }) {
+        try {
+          await addDoc(collection(firestore, 'blog'), {
+            ...blogData,
+            img: imgUrl,
+            date: new Date(),
+          });
 
           return { data: 'ok' };
         } catch (error) {
@@ -61,11 +166,11 @@ const blogApi = apiWithBlogTag.injectEndpoints({
       invalidatesTags: ['Blog'],
     }),
     updateBlog: builder.mutation({
-      async queryFn({ id, data, imgUrl }) {
+      async queryFn({ id, blogData, imgUrl }) {
         try {
           await updateDoc(doc(firestore, 'blog', id), {
-            ...data,
-            img: imgUrl || data.img,
+            ...blogData,
+            img: imgUrl || blogData.img,
           });
           return { data: 'ok' };
         } catch (error) {
@@ -103,8 +208,11 @@ const blogApi = apiWithBlogTag.injectEndpoints({
 export const {
   useGetBlogQuery,
   useGetBlogsQuery,
+  useGetCountBlogsQuery,
+  useGetBlogsPaginationQuery,
   useAddBlogMutation,
   useDeleteBlogMutation,
   useUpdateBlogMutation,
   useAddUserMutation,
+  useGetBlogsLimitQuery,
 } = blogApi;

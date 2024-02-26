@@ -8,21 +8,13 @@ import {
   // deleteDoc,
   doc,
   getDoc,
+  getDocs,
+  query,
   // getDocs,
   // setDoc,
   updateDoc,
+  where,
 } from 'firebase/firestore';
-
-// export const usr = {
-//   id: '',
-//   name: 'User Name',
-//   role: 'user | author',
-//   email: 'user.@mail.ru',
-//   img: 'link image',
-//   articles: ['array blog id'],
-//   about: 'about user',
-//   description: 'description user',
-// };
 
 /* Change email user
   import { getAuth, updateEmail } from "firebase/auth";
@@ -61,12 +53,9 @@ const userApi = apiWithUserTag.injectEndpoints({
       },
     }),
     updateUser: builder.mutation({
-      async queryFn({ id, data, imgUrl }) {
+      async queryFn(data) {
         try {
-          await updateDoc(doc(firestore, 'user', id), {
-            ...data,
-            img: imgUrl,
-          });
+          await updateDoc(doc(firestore, 'user', data.id), data);
           return { data: 'ok' };
         } catch (error) {
           return { error };
@@ -74,7 +63,32 @@ const userApi = apiWithUserTag.injectEndpoints({
       },
       providesTags: ['User'],
     }),
+    getAuthors: builder.query({
+      async queryFn() {
+        try {
+          const authorRef = query(
+            collection(firestore, 'user'),
+            where('role', 'in', ['author'])
+          );
+          const res = await getDocs(authorRef);
+
+          const authorArray = [];
+
+          res.forEach((doc) => {
+            authorArray.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+
+          return { data: authorArray };
+        } catch (error) {
+          return { error };
+        }
+      },
+    }),
   }),
 });
 
-export const { useGetUserQuery, useUpdateUserMutation } = userApi;
+export const { useGetUserQuery, useUpdateUserMutation, useGetAuthorsQuery } =
+  userApi;

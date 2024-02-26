@@ -5,24 +5,20 @@ import Dropdown from './dropdown/dropdown';
 const Navbar = () => {
   const navs = [
     {
-      to: '/create',
-      title: 'Create',
-    },
-    {
-      to: '/edit',
-      title: 'Edit',
+      to: '/',
+      title: 'Home',
     },
     {
       to: '/magazine',
       title: 'Magazine',
     },
     {
-      to: '/author',
-      title: 'Author',
-    },
-    {
       to: '/podcast',
       title: 'Podcast',
+    },
+    {
+      to: '/author',
+      title: 'Author',
     },
   ];
 
