@@ -20,15 +20,12 @@ const App = () => {
     <>
       <div className='w-[1400px] max-w-[90%] mx-auto'>
         <AuthProvider>
-          <BrowserRouter basename=''>
+          <BrowserRouter basename='rtkquery_firebase'>
             <Navbar />
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/edit' element={<Edit />} />
-              <Route
-                path='/medium'
-                element={<BlogVertical />}
-              />
+              <Route path='/medium' element={<BlogVertical />} />
               <Route path='/update/:id' element={<Edit />} />
               <Route path='/magazine' element={<Outlet />}>
                 <Route index element={<Magazine />} />
@@ -43,10 +40,7 @@ const App = () => {
                 <Route path=':id' element={<PodcastDetail />} />
               </Route>
               <Route path='/login' element={<Login />} />
-              <Route
-                path='/register'
-                element={<Register />}
-              />
+              <Route path='/register' element={<Register />} />
               <Route path='/profile' element={<User />} />
             </Routes>
           </BrowserRouter>
