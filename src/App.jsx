@@ -23,25 +23,25 @@ const App = () => {
           <BrowserRouter>
             <Navbar />
             <Routes>
-              <Route path='/' element={<Home />} />
-              <Route path='/edit' element={<Edit />} />
-              <Route path='/medium' element={<BlogVertical />} />
-              <Route path='/update/:id' element={<Edit />} />
-              <Route path='/magazine' element={<Outlet />}>
+              <Route path='/rtkquery_firebase' element={<Home />} />
+              <Route path='/rtkquery_firebase/edit' element={<Edit />} />
+              <Route path='/rtkquery_firebase/medium' element={<BlogVertical />} />
+              <Route path='/rtkquery_firebase/update/:id' element={<Edit />} />
+              <Route path='/rtkquery_firebase/magazine' element={<Outlet />}>
                 <Route index element={<Magazine />} />
                 <Route path=':id' element={<MagazineDetail />} />
               </Route>
-              <Route path='/author' element={<Outlet />}>
+              <Route path='/rtkquery_firebase/author' element={<Outlet />}>
                 <Route index element={<Author />} />
                 <Route path=':id' element={<AuthorDetail />} />
               </Route>
-              <Route path='/podcast' element={<Outlet />}>
+              <Route path='/rtkquery_firebase/podcast' element={<Outlet />}>
                 <Route index element={<Podcast />} />
                 <Route path=':id' element={<PodcastDetail />} />
               </Route>
-              <Route path='/login' element={<Login />} />
-              <Route path='/register' element={<Register />} />
-              <Route path='/profile' element={<User />} />
+              <Route path='/rtkquery_firebase/login' element={<Login />} />
+              <Route path='/rtkquery_firebase/register' element={<Register />} />
+              <Route path='/rtkquery_firebase/profile' element={<User />} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>
