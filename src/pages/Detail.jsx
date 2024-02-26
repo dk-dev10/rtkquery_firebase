@@ -1,5 +1,8 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDeleteBlogMutation, useGetBlogQuery } from '../redux/service/mainApi';
+import {
+  useDeleteBlogMutation,
+  useGetBlogQuery,
+} from '../redux/service/mainApi';
 import { skipToken } from '@reduxjs/toolkit/query';
 import { useEffect } from 'react';
 
@@ -20,6 +23,11 @@ const Detail = () => {
       navigate('/');
     }
   };
+
+  if (!data) {
+    console.log(data)
+    return <h1>Sorry!</h1>;
+  }
 
   return (
     <div>

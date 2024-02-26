@@ -34,11 +34,11 @@ const BlogLong = ({ data }) => {
           </p>
           <p className='font-thin font-nutino text-sm'>
             <span className='font-semibold mr-2'>Duration</span>
-            {duration ? duration : 0} min
+            {duration} min
           </p>
-          <button className='border border-black px-[12px] py-[4px] rounded-[100px] ml-auto font-nutino font-normal text-xs uppercase'>
+          <span className='border border-black px-[12px] py-[4px] rounded-[100px] ml-auto font-nutino font-normal text-xs uppercase cursor-default'>
             {categories ? categories : 'label'}
-          </button>
+          </span>
         </div>
       </div>
     </div>

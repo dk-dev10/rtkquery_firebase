@@ -8,9 +8,12 @@ import {
   // deleteDoc,
   doc,
   getDoc,
+  getDocs,
+  query,
   // getDocs,
   // setDoc,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 
 /* Change email user
@@ -60,7 +63,32 @@ const userApi = apiWithUserTag.injectEndpoints({
       },
       providesTags: ['User'],
     }),
+    getAuthors: builder.query({
+      async queryFn() {
+        try {
+          const authorRef = query(
+            collection(firestore, 'user'),
+            where('role', 'in', ['author'])
+          );
+          const res = await getDocs(authorRef);
+
+          const authorArray = [];
+
+          res.forEach((doc) => {
+            authorArray.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+
+          return { data: authorArray };
+        } catch (error) {
+          return { error };
+        }
+      },
+    }),
   }),
 });
 
-export const { useGetUserQuery, useUpdateUserMutation } = userApi;
+export const { useGetUserQuery, useUpdateUserMutation, useGetAuthorsQuery } =
+  userApi;

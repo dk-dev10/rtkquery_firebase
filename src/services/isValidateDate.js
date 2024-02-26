@@ -11,13 +11,10 @@ export function isDate(date) {
   }
 }
 
-export const isValidDate2 = (date) => {
-  return lightFormat(
-    isDate(date) ? isDate(date) : new Date(),
-    'yyyy-MM-dd-hh:mm'
-  );
-};
 export const isValidDate = (date) => {
+  return lightFormat(isDate(date) ? isDate(date) : new Date(), 'dd.MM.yyyy');
+};
+export const isValidDate2 = (date) => {
   return intlFormat(isDate(date) ? date : new Date(), {
     year: 'numeric',
     month: 'long',

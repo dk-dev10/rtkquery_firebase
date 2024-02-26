@@ -50,9 +50,9 @@ const BlogMedium = ({ data, link }) => {
               {duration} Min
             </p>
 
-            <button className='border border-black px-[12px] py-[4px] rounded-[100px] ml-auto font-nutino font-normal text-xs uppercase'>
+            <span className='border border-black px-[12px] py-[4px] rounded-[100px] ml-auto font-nutino font-normal text-xs uppercase cursor-default'>
               {categories}
-            </button>
+            </span>
           </div>
         </div>
       </div>

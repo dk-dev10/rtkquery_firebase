@@ -7,6 +7,7 @@ import {
   signOut,
 } from 'firebase/auth';
 import { useGetUserQuery } from 'redux/service/user/userApi';
+import { toast } from 'sonner';
 
 export const useAuth = () => {
   const [currentUser, setCurrentUser] = useState({
@@ -24,6 +25,9 @@ export const useAuth = () => {
   const logoutUser = () => {
     signOut(auth)
       .then(() => {
+        toast.info('User Logout!', {
+          position: 'top-right',
+        });
         setCurrentUser(() => ({
           id: null,
           user: null,

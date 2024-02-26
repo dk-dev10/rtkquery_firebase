@@ -1,7 +1,7 @@
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
-import Edit from './pages/Edit';
+import Edit from './pages/Admin/Edit';
 import BlogVertical from 'components/blog/blogVertical';
 import MagazineDetail from 'pages/Magazine/MagazineDetail';
 import Magazine from 'pages/Magazine/Magazine';
@@ -14,7 +14,6 @@ import Login from 'pages/Auth/Login';
 import Register from 'pages/Auth/Register';
 import { AuthProvider } from 'context/AuthContext';
 import User from 'pages/User/User';
-import FilePreviewer from 'pages/Create';
 
 const App = () => {
   return (
@@ -25,7 +24,6 @@ const App = () => {
             <Navbar />
             <Routes>
               <Route path='/' element={<Home />} />
-              <Route path='/create' element={<FilePreviewer />} />
               <Route path='/edit' element={<Edit />} />
               <Route path='/medium' element={<BlogVertical />} />
               <Route path='/update/:id' element={<Edit />} />

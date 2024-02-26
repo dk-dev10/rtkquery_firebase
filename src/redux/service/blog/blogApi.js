@@ -16,6 +16,7 @@ import {
   setDoc,
   startAfter,
   updateDoc,
+  where,
 } from 'firebase/firestore';
 
 const blogApi = apiWithBlogTag.injectEndpoints({
@@ -65,25 +66,32 @@ const blogApi = apiWithBlogTag.injectEndpoints({
       providesTags: ['Blog'],
     }),
     getBlogsPagination: builder.query({
-      async queryFn({ lim, next, prev }) {
+      async queryFn({ lim, next, prev, categorie }) {
         try {
           let blogRef, firstVisible, lastVisible, blogRes;
           if (next) {
             blogRef = query(
               collection(firestore, 'blog'),
               startAfter(next),
+              where('categories', 'in', categorie),
               limit(lim)
             );
+
             blogRes = await getDocs(blogRef);
           } else if (prev) {
             blogRef = query(
               collection(firestore, 'blog'),
               endBefore(prev),
+              where('categories', 'in', categorie),
               limit(lim)
             );
             blogRes = await getDocs(blogRef);
           } else {
-            blogRef = query(collection(firestore, 'blog'), limit(lim));
+            blogRef = query(
+              collection(firestore, 'blog'),
+              limit(lim),
+              where('categories', 'in', categorie)
+            );
             blogRes = await getDocs(blogRef);
             lastVisible = blogRes.docs[blogRes.docs.length - 1];
             firstVisible = blogRes.docs[0];
@@ -97,19 +105,28 @@ const blogApi = apiWithBlogTag.injectEndpoints({
             });
           });
 
-          return { data: { blogs, next: lastVisible, prev: firstVisible } };
+          return {
+            data: { blogs, next: lastVisible, prev: firstVisible },
+          };
         } catch (error) {
           return { error };
         }
       },
     }),
     getBlog: builder.query({
-      async queryFn(id) {
+      async queryFn({ id, authorId }) {
         try {
-          const fetch = doc(firestore, 'blog', id);
-          const blog = await getDoc(fetch);
+          let blog;
+          if (authorId) {
+            const fetch = doc(firestore, 'blog', id);
+            const res = await getDoc(fetch);
+            blog = res.data().author.id === authorId ? res.data() : undefined;
+          } else {
+            const fetch = doc(firestore, 'blog', id);
+            blog = (await getDoc(fetch)).data();
+          }
 
-          return { data: blog.data() };
+          return { data: blog };
         } catch (error) {
           return { error };
         }
@@ -117,9 +134,12 @@ const blogApi = apiWithBlogTag.injectEndpoints({
       providesTags: ['Blog'],
     }),
     getCountBlogs: builder.query({
-      async queryFn() {
+      async queryFn(categorie) {
         try {
-          const coll = collection(firestore, 'blog');
+          const coll = query(
+            collection(firestore, 'blog'),
+            where('categories', 'in', categorie)
+          );
           const snapshot = await getCountFromServer(coll);
           const count = snapshot.data().count;
           return { data: count };

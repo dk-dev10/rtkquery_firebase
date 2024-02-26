@@ -12,6 +12,9 @@ import { toast } from 'sonner';
 import { readingTime } from 'services/readingTime';
 import { X } from 'lucide-react';
 import { useAuth } from 'hook/useAuth';
+import DropdownOptions from 'components/dropdown/dropdownOptions';
+import { categorie } from 'services/categories';
+import NotFound from 'components/notFound/NotFound';
 
 const initState = {
   title: '',
@@ -43,13 +46,15 @@ const Edit = () => {
 
   const [uploadFiles] = useUploadFileMutation();
 
-  const [addBlog] = useAddBlogMutation();
-  const [updateBlog] = useUpdateBlogMutation();
+  const [addBlog, { isLoading }] = useAddBlogMutation();
+  const [updateBlog, { isLoading: isLoadingUpdate }] = useUpdateBlogMutation();
   const navigate = useNavigate();
 
   const { id } = useParams();
-  const { data: blog } = useGetBlogQuery(id ? id : skipToken);
-
+  const { data: blog, isFetching } = useGetBlogQuery({
+    id: id ? id : skipToken,
+    authorId: currentUser?.id,
+  });
   const { filePreview, filePickerRef, previewFile, sameFile } =
     useFilePreview();
 
@@ -81,6 +86,10 @@ const Edit = () => {
     setData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const handleChangeCategorie = (item) => {
+    setData((prev) => ({ ...prev, categories: item }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -100,10 +109,13 @@ const Edit = () => {
       toast.success('Article updated', {
         position: 'top-right',
       });
-      navigate('/');
+      navigate(-1);
     } else {
       const { data: imgUrl } = await uploadFiles(file);
       await addBlog({ blogData, imgUrl });
+      toast.success('Article added', {
+        position: 'top-right',
+      });
       navigate('/');
     }
   };
@@ -123,6 +135,10 @@ const Edit = () => {
   useEffect(() => {
     setMaxCount(data.description.length);
   }, [data, maxCount]);
+
+  if (id && !isFetching && blog === undefined) {
+    return <NotFound />;
+  }
 
   return (
     <div className='m-auto p-[15px] mt-10 border w-[50vw]'>
@@ -164,21 +180,30 @@ const Edit = () => {
           type='file'
           hidden
         />
-        <button
-          className='p-3 border px-6 border-black'
+        <div
+          className='w-full aspect-video overflow-hidden border group cursor-pointer relative'
           onClick={() => filePickerRef.current.click()}
-          type='button'
         >
-          Select picture
-        </button>
-        <div className='w-full aspect-video overflow-hidden border'>
           {(filePreview || data?.img) && (
             <img
               src={filePreview ? filePreview : data.img}
-              className='w-full h-full object-cover'
+              className='w-full h-full object-cover '
               alt='preview image'
             />
           )}
+          <div className='w-full h-full bg-[rgba(0,0,0, .8)] bg-[#00000059] flex justify-center items-center group-hover:opacity-100 opacity-0 absolute top-0 left-0 transition-opacity'>
+            <span className='border border-white text-white py-4 px-8'>
+              Select picture
+            </span>
+          </div>
+        </div>
+
+        <div className='w-full'>
+          <DropdownOptions
+            categorie={categorie}
+            setCategoria={handleChangeCategorie}
+            activeCategoria={data?.categories}
+          />
         </div>
 
         {data.content.map((inp, i) => {
@@ -256,9 +281,10 @@ const Edit = () => {
             Content Quote
           </button>
         </div>
+
         <input
           className='border p-2 cursor-pointer bg-slate-500 text-white disabled:bg-slate-800 disabled:text-slate-400 disabled:cursor-not-allowed'
-          disabled={!title | !description}
+          disabled={isLoading || isLoadingUpdate}
           type='submit'
           value='send'
         />

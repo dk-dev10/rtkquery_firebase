@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Link } from 'react-router-dom';
+import { isValidDate } from 'services/isValidateDate';
+import { sliceStr } from 'services/substring';
 
 const BlogVertical = ({
   title,
@@ -14,12 +16,10 @@ const BlogVertical = ({
   return (
     <div className='w-full h-full flex flex-col gap-4 max-w-[750px]'>
       <div className='flex items-center'>
-        <p className='font-thin font-nutino text-sm'>
-          {date ? date : '16. March 2022'}
-        </p>
-        <button className='border border-black px-[12px] py-[4px] rounded-[100px] ml-auto font-nutino font-normal text-xs uppercase'>
-          {categories ? categories : 'label'}
-        </button>
+        <p className='font-thin font-nutino text-sm'>{isValidDate(date)}</p>
+        <span className='border border-black px-[12px] py-[4px] rounded-[100px] ml-auto font-nutino font-normal text-xs uppercase cursor-default'>
+          {categories}
+        </span>
       </div>
       <div className='w-full h-1/1 aspect-square'>
         <img
@@ -34,22 +34,22 @@ const BlogVertical = ({
           {title}
         </Link>
       </h3>
-      <p className='text-sm leading-[180%] min-h-20 font-light mb-4 text-slate-900'>
-        {description}
+      <p className='text-sm leading-[140%] min-h-20 font-light mb-4 text-slate-900'>
+        {sliceStr(description, 72)}
       </p>
       <div className='mt-auto flex items-center gap-6'>
         <p className='font-thin font-nutino text-xs'>
           <span className='font-semibold mr-2'>Text:</span>
           <Link
-            to={`/author/${id}`}
+            to={`/author/${author.id}`}
             className='hover:text-red-800 font-thin font-nutino text-xs'
           >
-            {author ? author : 'Jakob Gronberg'}
+            {author.name}
           </Link>
         </p>
         <p className='font-thin font-nutino text-xs'>
           <span className='font-semibold mr-2'>Duration:</span>
-          {duration ? duration : '1 Min'}
+          {duration} min
         </p>
       </div>
     </div>

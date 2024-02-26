@@ -1,6 +1,7 @@
 import BlogMedium from 'components/blog/blogMedium';
 
 import GoBack from 'components/goback';
+import NotFound from 'components/notFound/NotFound';
 
 import { Link, useParams } from 'react-router-dom';
 import { useGetBlogQuery } from 'redux/service/blog/blogApi';
@@ -9,11 +10,15 @@ import { isValidDate } from 'services/isValidateDate';
 
 const MagazineDetail = () => {
   const { id } = useParams();
-  const { data, isLoading } = useGetBlogQuery(id);
+  const { data, isLoading, isFetching } = useGetBlogQuery({ id });
   const { data: userData } = useGetUserQuery(data?.author?.id);
 
   if (isLoading) {
     return <p>Loading ...</p>;
+  }
+
+  if (!isFetching && data === undefined) {
+    return <NotFound />;
   }
 
   return (
@@ -50,7 +55,7 @@ const MagazineDetail = () => {
             element.type === 'text' ? (
               <p
                 key={element.type + i}
-                className='text-base font-nutino font-light leading-snug'
+                className='text-base font-nutino font-light whitespace-pre-wrap'
               >
                 {element.text}
               </p>
@@ -64,7 +69,7 @@ const MagazineDetail = () => {
                   <blockquote className='text-5xl font-bold leading-tight'>
                     {element.text}
                   </blockquote>
-                  <figcaption className='text-sm mt-6'>
+                  <figcaption className='text-xl mt-6'>
                     {element.author}
                   </figcaption>
                 </figure>

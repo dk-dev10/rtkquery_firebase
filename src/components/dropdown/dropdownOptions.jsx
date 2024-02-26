@@ -1,39 +1,53 @@
-import { useState } from 'react';
+/* eslint-disable react/prop-types */
+import useDropdown from 'hook/useDropdown';
 
-const DropdownOptions = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownItems = ['Option 1', 'Option 2', 'Option 3'];
+const DropdownOptions = ({
+  categorie,
+  setCategoria,
+  activeCategoria,
+  disabled = false,
+}) => {
+  const { isDrop, setIsDrop, catMenu } = useDropdown();
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+  const handleChange = (item) => {
+    setCategoria(item);
+    setIsDrop(false);
   };
 
   return (
-    <div className='relative'>
-      <button
-        className='bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center'
-        onClick={toggleDropdown}
-      >
-        Dropdown Button
-        <svg
-          className='fill-current h-4 w-4 ml-2'
-          xmlns='http://www.w3.org/2000/svg'
-          viewBox='0 0 20 20'
+    <div
+      ref={catMenu}
+      className='flex items-center justify-center bg-white border border-slate-400  min-w-36 max-w-48 '
+    >
+      <div className='relative w-full px-4 py-2 '>
+        <button
+          className='flex items-center capitalize text-start  w-full h-full text-gray-600 rounded-full'
+          onClick={() => setIsDrop((prev) => !prev)}
+          type='button'
+          disabled={disabled}
         >
-          {/* Dropdown icon */}
-        </svg>
-      </button>
-      <ul
-        className={`absolute ${
-          isOpen ? 'block' : 'hidden'
-        } bg-white text-gray-800 pt-1`}
-      >
-        {dropdownItems.map((item, index) => (
-          <li key={index} className='hover:bg-gray-200 py-2 px-4'>
-            {item}
-          </li>
-        ))}
-      </ul>
+          Categorie{activeCategoria ? `: ${activeCategoria}` : ''}
+        </button>
+        <div
+          className={`absolute left-0 z-10 w-56 mt-4 origin-top-right bg-white border border-gray-100 rounded-md shadow-lg ${
+            isDrop ? 'block' : 'hidden'
+          }`}
+        >
+          <div className='p-2'>
+            {categorie &&
+              categorie.map((ctg, index) => (
+                <button
+                  type='button'
+                  key={index + ctg}
+                  onClick={() => handleChange(ctg)}
+                  className='text-start block px-4 py-2 text-base capitalize text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700 w-full'
+                >
+                  {ctg}
+                </button>
+              ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
