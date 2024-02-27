@@ -1,4 +1,10 @@
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from 'react-router-dom';
 import Home from './pages/Home';
 import Navbar from './components/Navbar';
 import Edit from './pages/Admin/Edit';
@@ -20,11 +26,11 @@ const App = () => {
     <>
       <div className='w-[1400px] max-w-[90%] mx-auto'>
         <AuthProvider>
-          <BrowserRouter>
+          <BrowserRouter basename={import.meta.env.BASE_URL}>
             <Navbar />
             <Routes>
               <Route path='/' element={<Home />} />
-              <Route path='/edit' element={<Edit />} />
+              <Route path='/new' element={<Edit />} />
               <Route path='/medium' element={<BlogVertical />} />
               <Route path='/update/:id' element={<Edit />} />
               <Route path='/magazine' element={<Outlet />}>
@@ -42,6 +48,7 @@ const App = () => {
               <Route path='/login' element={<Login />} />
               <Route path='/register' element={<Register />} />
               <Route path='/profile' element={<User />} />
+              <Route path='/*' element={<Navigate to='/main' />} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>
