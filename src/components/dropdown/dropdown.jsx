@@ -33,11 +33,11 @@ const Dropdown = () => {
               Profile
             </Link>
             <Link
-              to={'/edit'}
+              to={'/new'}
               onClick={() => setIsDrop(false)}
               className='block px-4 py-2 text-base text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700'
             >
-              Edit
+              Create
             </Link>
             <hr className='divide-x' />
             {currentUser.id ? (

@@ -20,11 +20,11 @@ const App = () => {
     <>
       <div className='w-[1400px] max-w-[90%] mx-auto'>
         <AuthProvider>
-          <BrowserRouter basename='rtkquery_firebase'>
+          <BrowserRouter basename='/rtkquery_firebase/'>
             <Navbar />
             <Routes>
               <Route path='/' element={<Home />} />
-              <Route path='/edit' element={<Edit />} />
+              <Route path='/new' element={<Edit />} />
               <Route path='/medium' element={<BlogVertical />} />
               <Route path='/update/:id' element={<Edit />} />
               <Route path='/magazine' element={<Outlet />}>
