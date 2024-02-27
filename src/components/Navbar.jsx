@@ -12,10 +12,10 @@ const Navbar = () => {
       to: '/magazine',
       title: 'Magazine',
     },
-    {
-      to: '/podcast',
-      title: 'Podcast',
-    },
+    // {
+    //   to: '/podcast',
+    //   title: 'Podcast',
+    // },
     {
       to: '/author',
       title: 'Author',

@@ -4,6 +4,7 @@ import jsconfigPaths from 'vite-jsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/rtkquery_firebase',
   plugins: [react(), jsconfigPaths()],
   resolve: {
     alias: {
