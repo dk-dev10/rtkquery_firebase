@@ -1,14 +1,18 @@
 import { useAuth } from 'hook/useAuth';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const { loginUser } = useAuth();
+  const { loginUser, userID } = useAuth();
 
   const navigate = useNavigate();
+
+  if (userID !== null) {
+    return <Navigate to='/' />;
+  }
 
   const handleEmail = (event) => {
     setEmail(event.target.value);
