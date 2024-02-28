@@ -3,7 +3,7 @@ import useDropdown from 'hook/useDropdown';
 import { LogIn, LogOut, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const Dropdown = () => {
+const Dropdown = ({ drops }) => {
   const { currentUser, logoutUser } = useAuth();
   const { catMenu, setIsDrop, isDrop } = useDropdown();
 
@@ -24,22 +24,22 @@ const Dropdown = () => {
             isDrop ? 'block' : 'hidden'
           }`}
         >
-          <div className='p-2'>
-            <Link
-              to={'/profile'}
-              onClick={() => setIsDrop(false)}
-              className='block px-4 py-2 text-base text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700'
-            >
-              Profile
-            </Link>
-            <Link
-              to={'/new'}
-              onClick={() => setIsDrop(false)}
-              className='block px-4 py-2 text-base text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700'
-            >
-              Create
-            </Link>
-            <hr className='divide-x' />
+          <ul className='p-2'>
+            {drops.map((item) => (
+              <li
+                key={item.link + item.nav?.title}
+                className='block px-4 py-2 text-base text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700'
+              >
+                <Link
+                  to={item.link}
+                  onClick={() => setIsDrop(false)}
+                  className='block'
+                >
+                  {item.nav.title}
+                </Link>
+              </li>
+            ))}
+            <hr className='divide-x my-2' />
             {currentUser.id ? (
               <button
                 className='flex items-center gap-3 w-full px-4 py-2 text-base text-gray-500 rounded-lg hover:bg-gray-50 hover:text-gray-700'
@@ -59,7 +59,7 @@ const Dropdown = () => {
                 Login <LogIn className='text-base h-5 mt-[2px]' />
               </Link>
             )}
-          </div>
+          </ul>
         </div>
       </div>
     </div>

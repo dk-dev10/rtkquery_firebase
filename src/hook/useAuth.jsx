@@ -66,5 +66,5 @@ export const useAuth = () => {
     });
   }, [auth, userID]);
 
-  return { currentUser, logoutUser, loginUser, registerUser };
+  return { currentUser, logoutUser, loginUser, registerUser, userID };
 };

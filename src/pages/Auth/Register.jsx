@@ -8,7 +8,7 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [addUser] = useAddUserMutation();
 
-  const { registerUser } = useAuth();
+  const { registerUser, userID } = useAuth();
 
   const navigate = useNavigate();
 
@@ -36,6 +36,10 @@ const Register = () => {
   const handlePassword = (event) => {
     setPassword(event.target.value);
   };
+
+  if (userID) {
+    navigate('/');
+  }
 
   return (
     <div style={{ textAlign: 'center' }}>

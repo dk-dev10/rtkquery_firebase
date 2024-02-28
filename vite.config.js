@@ -5,7 +5,7 @@ import jsconfigPaths from 'vite-jsconfig-paths';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), jsconfigPaths()],
-  base: '/main',
+  base: '/',
   resolve: {
     alias: {
       assets: '/src/assets',
